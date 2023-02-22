@@ -46,7 +46,7 @@ textarea.addEventListener('keyup', (e) => {
         enteredOptions.innerHTML = `
             <p>Your options are: ${new Intl.ListFormat("en-US", { style: "long", type: "conjunction" }).format(
                 JSON.parse(localStorage.getItem('options'))
-            )}
+            )}</p>
         `;
 
         let option;
