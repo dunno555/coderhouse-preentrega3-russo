@@ -28,7 +28,19 @@ const textarea = document.querySelector('#options');
 const enteredOptions = document.querySelector('#entered-options');
 const result = document.getElementById('result');
 const tryAgainBtn = document.getElementById('try-again');
-localStorage.clear();
+const chosenOptionLS = localStorage.getItem('chosen-option') || '';
+if (chosenOptionLS != '') {
+    let newOption = new Option(JSON.parse(chosenOptionLS).name, JSON.parse(chosenOptionLS).hexColor);
+    result.style.display = 'block';
+    result.innerHTML = resultText(newOption.name, newOption.hexColor, newOption.hexColorURL());
+};
+
+function resultText(name, color, colorURL) {
+    return `<p>The Random Picker has spoken!</p>
+    <p>Your option for today is <b>${name}</b>!</p>
+    <p>And, just for today, your option's special color is <input type="color" value="${color}"> <b><span style="color:${color};">${color}</span></b>!</p>
+    <p>For more info on your color, click <a target="_blank" href="${colorURL}">here</a></p>`
+}
 
 function optionsGenerator(input) {
     // The array is made up of options without whitespace. "  1  " is turned into "1", for example
@@ -54,14 +66,10 @@ textarea.addEventListener('keyup', (e) => {
         option = options[Math.floor(Math.random() * options.length)];
         chosenOption = new Option(option);
         chosenOption.hexColorGenerator();
+        localStorage.setItem('chosen-option', JSON.stringify(chosenOption));
         textarea.value = '';
         result.style.display = 'block';
-        result.innerHTML = `
-            <p>The Random Picker has spoken!</p>
-            <p>Your option for today is <b>${chosenOption.name}</b>!</p>
-            <p>And, just for today, your option's special color is <input type="color" value="${chosenOption.hexColor}"> <b><span style="color:${chosenOption.hexColor};">${chosenOption.hexColor}</span></b>!</p>
-            <p>For more info on your color, click <a target="_blank" href="${chosenOption.hexColorURL()}">here</a></p>
-        `
+        result.innerHTML = resultText(chosenOption.name, chosenOption.hexColor, chosenOption.hexColorURL());
         tryAgainBtn.style.display = 'block';
     };
 });
@@ -71,5 +79,5 @@ tryAgainBtn.addEventListener('click', () => {
     result.innerHTML = '';
     result.style.display = 'none';
     tryAgainBtn.style.display = 'none';
-    localStorage.clear();
+    localStorage.removeItem('options');
 })
